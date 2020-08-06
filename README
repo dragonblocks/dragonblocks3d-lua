@@ -1,0 +1,7 @@
+depends:
+$ sudo apt install lua5.3 libsqlite3
+$ luarocks install lsqlite3
+$ luarocks install luasocket
+$ luarocks install luafilesystem
+
+Build moongl and moonglfw: See build README.md in deps/moongl and deps/moonglfw
