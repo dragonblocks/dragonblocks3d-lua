@@ -1,18 +1,22 @@
 local event_interface = {}
 
 function event_interface:init()
+	assert(self._task_manager)
 	self:clear_event_listeners()
 end
 
-function event_interface:fire_event(eventtype, event)
+function event_interface:fire_event(event, callback)
 	event = event or {}
-	event.type = eventtype
 	event.origin = self
 	local listeners = self._event_listeners[eventtype]
 	if listeners then
-		for _, listener in ipairs(listeners) do
-			listener(event)
-		end
+		self._task_manager:add_task(function()
+			for _, listener in ipairs(listeners) do
+				listener(event)
+				coroutine.yield()
+			end
+			callback(event)
+		end)
 	end
 end
 
