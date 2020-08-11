@@ -1,6 +1,4 @@
-local serializer = {}
-
-function serializer:serialize()
+function Dragonblocks:serialize()
 	local data = "{"
 	for k, v in pairs(self) do
 		local kdata, vdata
@@ -35,15 +33,16 @@ function serializer:serialize()
 	return data .. "}"
 end
 
-function serializer:deserialize(raw)
-	raw = "return" .. (raw or "")
+function Dragonblocks:deserialize(raw)
+	if not raw then
+		raw = self
+		self = {}
+	end
+	raw = "return" .. raw
 	local f = loadstring(raw)
 	local data = f and f()
 	if type(data) == "table" then
-		for k, v in pairs(data) do
-			self[k] = v
-		end
+		table.assign(self, raw)
 	end
+	return self
 end
-
-return serializer

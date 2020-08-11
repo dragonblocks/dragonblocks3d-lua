@@ -1,21 +1,14 @@
-local class = {}
-
-local instance_metatable = {
-	__index = function(t, k)
-		if k == "_call" then return end
-		local f = rawget(t._class, k)
-		if type(f) == "function" then
-			return f
+function Dragonblocks.create_class()
+	local class = self or {}
+	setmetatable(class, {
+		__call = function(_, ...)
+			local o = {}
+			setmetatable(o, {__index = class})
+			if o.constructor then
+				o:constructor(...)
+			end
+			return o
 		end
-	end
-}
-
-function class:_call(...)
-	local o = {class = self}
-	setmetatable(o, instance_metatable)
-	if o.constructor then
-		o:constructor(table.unpack(...))
-	end
-end 
-
-return class
+	})
+	return class
+end

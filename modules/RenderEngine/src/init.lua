@@ -1,37 +1,80 @@
-glfw.window_hint("context version major", 3)
-glfw.window_hint("context version minor", 3)
-glfw.window_hint("opengl profile", "core")
+RenderEngine:run("camera")
+RenderEngine:run("shaders")
+RenderEngine:run("textures")
+RenderEngine:run("window")
 
-function RenderEngine.reshape(_, width, height)
-	gl.viewport(0, 0, width, height)
+RenderEngine.Mesh = RenderEngine:run("mesh")
+
+function RenderEngine:init()
+	self:init_glfw()
+	self:create_window()
+	self:init_glew()
+	self:load_shaders()
+	self:set_sky("#FFFFFF")
+	self:add_render_task()
 end
 
-function RenderEngine:open_window()
-	self.window = glfw.create_window(50, 50, "Unnamed Window")
-	glfw.make_context_current(self.window)
+function RenderEngine:init_glew()
 	gl.init()
-	glfw.set_framebuffer_size_callback(self.window, RenderEngine.reshape)
-end
-
-function RenderEngine:set_window_title(title)
-	glfw.set_window_title(self.window, title)
-end
-
-function RenderEngine:render()
-	glfw.poll_events()
-	gl.clear_color(1.0, 0.5, 0.2, 1.0)
-	gl.clear("color", "depth")
-	glfw.swap_buffers(self.window)
-	coroutine.yield()
-end
-
-function RenderEngine:render_loop()
-	repeat RenderEngine:render()
-	until glfw.window_should_close(self.window)
 end
 
 function RenderEngine:add_render_task()
-	Dragonblocks:add_task(function() RenderEngine:render_loop() end)
+	Dragonblocks:add_task(function()
+
+	end)
 end
 
-RenderEngine:init()
+function RenderEngine:render_loop()
+	self.last_time = glfw.get_time()
+	repeat
+		self:render()
+		--coroutine.yield()
+	until glfw.window_should_close(self.window)
+end
+
+function RenderEngine:render()
+	local dtime = glfw.get_time() - self.last_time
+	self.last_time = glfw.get_time()
+	
+	gl.clear_color(self.sky)
+	gl.enable("depth test")
+	gl.clear("color", "depth")
+	
+	gl.use_program(self.shaders)
+	
+	local view_matrix = glm.translate(self.camera_pos)
+	local projection_matrix = glm.perspective(math.rad(self.fov), self.window_width / self.window_height, 0.1, 100)	
+	
+	gl.uniform_matrix4f(self.projection_matix_location, true, projection_matrix)
+	gl.uniform_matrix4f(self.view_matix_location, true, view_matrix)
+	
+	for _, mesh in ipairs(self.Mesh.list) do
+		mesh:render(dtime)
+	end
+	
+	glfw.swap_buffers(self.window)
+	glfw.poll_events()
+end
+
+
+--[[
+function RenderEngine:clear_removed_meshes()
+	local remove_indices = {} 
+	for index, mesh in pairs(self.meshes) do
+		if mesh.removed then
+			table.insert(remove_indices, index)
+		end
+	end
+	for i, index in pairs(remove_indices)
+		table.remove(self.meshes, index - i + 1)
+	end
+end
+]]--
+function RenderEngine:set_sky(htmlcolor)
+	local r, g, b = hex2rgb(htmlcolor)
+	self.sky = {r, g, b, 1.0}
+end
+
+function RenderEngine:set_wireframe(v)
+	gl.polygon_mode("front and back", (v and "line" or "fill"))
+end

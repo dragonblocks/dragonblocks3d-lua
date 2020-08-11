@@ -4,3 +4,12 @@
 [submodule "moonglfw"]
 	path = deps/moonglfw
 	url = https://github.com/stetre/moonglfw
+[submodule "moonglmath"]
+	path = deps/moonglmath
+	url = https://github.com/stetre/moonglmath
+[submodule "moonassimp"]
+	path = deps/moonassimp
+	url = https://github.com/stetre/moonassimp
+[submodule "moonimage"]
+	path = deps/moonimage
+	url = https://github.com/stetre/moonimage
