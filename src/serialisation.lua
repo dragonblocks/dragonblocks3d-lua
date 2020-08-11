@@ -23,6 +23,8 @@ function Dragonblocks:serialize()
 			vdata = v
 		elseif vtype == "boolean" then
 			vdata = v and "true" or "false"
+		elseif vtype == "function" then
+			vdata = tostring(v)
 		else
 			serialize_pair = false
 		end

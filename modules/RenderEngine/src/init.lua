@@ -3,7 +3,9 @@ RenderEngine:run("shaders")
 RenderEngine:run("textures")
 RenderEngine:run("window")
 
+RenderEngine.cube_vertices = RenderEngine:run("cube_vertices")
 RenderEngine.Mesh = RenderEngine:run("mesh")
+RenderEngine.ChunkMesh = RenderEngine:run("chunk_mesh")
 RenderEngine.camera = RenderEngine:run("camera")
 
 function RenderEngine:init()
@@ -25,12 +27,15 @@ function RenderEngine:add_render_task()
 	end)
 end
 
-function RenderEngine:render_loop()
+function RenderEngine:render_loop(is_only_task)
 	self.last_time = glfw.get_time()
 	repeat
 		self:render()
-		--coroutine.yield()
+		if not is_only_task then
+			coroutine.yield()
+		end
 	until glfw.window_should_close(self.window)
+	os.exit()
 end
 
 function RenderEngine:update_projection_matrix()
@@ -53,7 +58,7 @@ function RenderEngine:render()
 	
 	gl.use_program(self.shaders)	
 	
-	RenderEngine:update_view_matrix()
+	self:update_view_matrix()
 	
 	for _, mesh in ipairs(self.Mesh.list) do
 		mesh:render(dtime)

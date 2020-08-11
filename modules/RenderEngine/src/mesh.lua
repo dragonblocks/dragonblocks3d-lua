@@ -3,7 +3,6 @@ local Mesh = Dragonblocks.create_class()
 Mesh.EFFECT_GROW = 1
 Mesh.EFFECT_FLYIN = 2
 Mesh.EFFECT_ROTATE = 3
-Mesh.CUBE = RenderEngine:run("cube")
 Mesh.list = {}
 
 function Mesh:set_size(size)
@@ -15,7 +14,7 @@ function Mesh:set_pos(pos)
 end
 
 function Mesh:set_texture(texture)
-	self.texture = texture
+	self.textures = {texture}
 end
 
 function Mesh:set_effect(effect, after)
@@ -41,11 +40,9 @@ function Mesh:remove_from_scene()
 	end
 end
 
-function Mesh:make_cube()
-	self:apply_vertices(Mesh.CUBE)
-end
-
 function Mesh:apply_vertices(vertices)
+	self.vertex_blob_count = #vertices / 5 / self.vertex_blob_size
+	
 	self.vao = gl.gen_vertex_arrays(1)
 	self.vbo = gl.gen_buffers(1)
 	
@@ -100,9 +97,11 @@ function Mesh:render(dtime)
 	
 	gl.uniform_matrix4f(gl.get_uniform_location(RenderEngine.shaders, "model"), true, model_matrix)
 	gl.active_texture(0)
-	gl.bind_texture("2d", self.texture)
 	gl.bind_vertex_array(self.vao)
-	gl.draw_arrays("triangles", 0, 36)
+	for i = 1, self.vertex_blob_count do
+		gl.bind_texture("2d", self.textures[i])
+		gl.draw_arrays("triangles", (i - 1) * self.vertex_blob_size, self.vertex_blob_size)
+	end
 	gl.unbind_vertex_array()
 	gl.unbind_texture("2d")
 end

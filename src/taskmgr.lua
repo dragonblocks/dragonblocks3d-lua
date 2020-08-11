@@ -11,7 +11,11 @@ function Dragonblocks:step()
 	local tasks = self.tasks
 	self.tasks = {}
 	for _, t in ipairs(tasks) do
-		if coroutine.resume(t) then
+		local continue, status = coroutine.resume(t)
+		if status then
+			print(status)
+		end
+		if continue then
 			table.insert(self.tasks, t)
 		end
 	end

@@ -12,7 +12,9 @@ function Chunk:constructor()
 end
 
 function Chunk:get_pos_hash(pos)
-	return pos.x + size * pos.y + size_squared * pos.z
+	local x, y, z = pos.x, pos.y, pos.z
+	if x > 15 or y > 15 or z > 15 or x < 0 or y < 0 or z < 0 then return end
+	return x + size * y + size_squared * z
 end
 
 function Chunk:add_block(pos, def)
