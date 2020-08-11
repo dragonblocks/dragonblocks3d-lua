@@ -34,7 +34,7 @@ function RenderEngine:render_loop()
 end
 
 function RenderEngine:update_projection_matrix()
-	gl.uniform_matrix4f(gl.get_uniform_location(self.shaders, "projection"), true, glm.perspective(math.rad(self.fov), self.window_width / self.window_height, 0.1, 100))
+	gl.uniform_matrix4f(gl.get_uniform_location(self.shaders, "projection"), true, glm.perspective(math.rad(self.fov), self.window_width / self.window_height, 0.0001, 100))
 end
 
 function RenderEngine:update_view_matrix()

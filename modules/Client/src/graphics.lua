@@ -25,7 +25,7 @@ end
 
 function graphics:create_chunk_meshes(chunk)
 	for _, block in pairs(chunk.blocks) do
-		self:create_block_mesh(block, true)
+		self:create_block_mesh(block, false)
 	end
 end
 
