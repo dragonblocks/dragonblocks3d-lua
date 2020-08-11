@@ -3,12 +3,13 @@ table.assign(LocalPlayer, PlayerSystem.Player)
 
 function LocalPlayer:constructor()
 	self:init()
-	self:set_speed(4)
+	self:set_speed(10)
 	self:set_fov(45)
 	self:set_yaw(180)
 	self:set_pitch(0)
 	self:add_event_listener("after_set_position", function(event) self:set_position_callback(event) end)
 	RenderEngine:add_event_listener("keypress", function(event) self:key_press_callback(event) end)
+	RenderEngine:add_event_listener("mousemove", function(event) self:mouse_move_callback(event) end)
 	RenderEngine:add_listen_key("w")
 	RenderEngine:add_listen_key("a")
 	RenderEngine:add_listen_key("s")
@@ -20,23 +21,28 @@ end
 function LocalPlayer:key_press_callback(event)
 	local keys = event.keys
 	local speed = self.speed * event.dtime
-	local yawvec, pitchvec = self.yaw_vector, self.pitch_vector
-	local vertvec = glm.vec3(0, 1, 0)
+	local hvec, vvec = self.horizontal_look, RenderEngine.camera.up
 	if keys["w"] then
-		self:move( speed * yawvec)
+		self:move( speed * hvec)
 	elseif keys["s"] then
-		self:move(-speed * yawvec)
+		self:move(-speed * hvec)
 	end
 	if keys["a"] then
-		self:move(-speed * (yawvec % pitchvec):normalize())
+		self:move(-speed * (hvec % vvec):normalize())
 	elseif keys["d"] then
-		self:move( speed * (yawvec % pitchvec):normalize())
+		self:move( speed * (hvec % vvec):normalize())
 	end
 	if keys["left shift"] then
-		self:move(-speed * vertvec)
+		self:move(-speed * vvec)
 	elseif keys["space"] then
-		self:move( speed * vertvec)
+		self:move( speed * vvec)
 	end
+end
+
+function LocalPlayer:mouse_move_callback(event)
+	self.yaw = self.yaw - event.x
+	self.pitch = self.pitch - event.y
+	self:update_look()
 end
 
 function LocalPlayer:set_position_callback(event)
@@ -52,16 +58,19 @@ function LocalPlayer:set_fov(fov)
 	RenderEngine.fov = fov
 end
 
-function LocalPlayer:set_yaw(degrees)
-	local radians = math.rad(degrees)
-	self.yaw_vector = glm.vec3(math.sin(radians), 0, math.cos(radians)):normalize()
-	RenderEngine.camera.front = self.yaw_vector
+function LocalPlayer:set_yaw(yaw)
+	self.yaw = math.rad(yaw)
+	self:update_look()
 end
 
-function LocalPlayer:set_pitch(degrees)
-	local radians = math.rad(degrees)
-	self.pitch_vector = glm.vec3(0, 1, 0)
-	RenderEngine.camera.up = self.pitch_vector
+function LocalPlayer:set_pitch(pitch)
+	self.pitch = math.rad(pitch)
+	self:update_look()
+end
+
+function LocalPlayer:update_look()
+	self.horizontal_look = glm.vec3(math.sin(self.yaw), 0, math.cos(self.yaw)):normalize()
+	RenderEngine.camera.front = glm.vec3(math.sin(self.yaw or 0), math.sin(self.pitch or 0), math.cos(self.yaw or 0)):normalize()
 end
 
 return LocalPlayer
