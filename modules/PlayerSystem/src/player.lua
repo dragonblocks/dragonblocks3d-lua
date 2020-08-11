@@ -23,6 +23,8 @@ function Player:raw_set_position(event)
 	})
 end
 
-
+function Player:set_speed(speed)
+	self.speed = speed
+end
 
 return Player

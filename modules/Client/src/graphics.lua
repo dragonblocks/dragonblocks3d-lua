@@ -5,7 +5,6 @@ function graphics:init()
 	
 	RenderEngine.bininear_filter = false
 	RenderEngine.mipmap = false
-	RenderEngine.camera_pos = glm.vec3(-8, -18, -40)
 	RenderEngine.fov = 45
 	RenderEngine.mesh_effect_grow_time = 0.25
 	RenderEngine.mesh_effect_flyin_time = 1
