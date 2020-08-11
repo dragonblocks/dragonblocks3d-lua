@@ -5,7 +5,8 @@ function graphics:init()
 	
 	RenderEngine.bininear_filter = false
 	RenderEngine.mipmap = false
-	RenderEngine.mouse_sensitivity = 0.012
+	RenderEngine.mouse_sensitivity = 0.7
+	--RenderEngine.pitch_move = true
 	RenderEngine.mesh_effect_grow_time = 0.25
 	RenderEngine.mesh_effect_flyin_time = 1
 	RenderEngine.mesh_effect_flyin_offset = 20

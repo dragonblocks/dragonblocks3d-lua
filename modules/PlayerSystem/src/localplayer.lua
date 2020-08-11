@@ -4,8 +4,8 @@ table.assign(LocalPlayer, PlayerSystem.Player)
 function LocalPlayer:constructor()
 	self:init()
 	self:set_speed(10)
-	self:set_fov(45)
-	self:set_yaw(180)
+	self:set_fov(86.1)
+	self:set_yaw(-90)
 	self:set_pitch(0)
 	self:add_event_listener("after_set_position", function(event) self:set_position_callback(event) end)
 	RenderEngine:add_event_listener("keypress", function(event) self:key_press_callback(event) end)
@@ -21,28 +21,33 @@ end
 function LocalPlayer:key_press_callback(event)
 	local keys = event.keys
 	local speed = self.speed * event.dtime
-	local hvec, vvec = self.horizontal_look, RenderEngine.camera.up
+	local camera = RenderEngine.camera
+	local front, right, up = camera.front, camera.right, camera.up
+	if not RenderEngine.pitch_move then
+		front = glm.vec3(front.x, 0, front.z):normalize()
+		up = glm.vec3(0, up.y, 0):normalize()
+	end
 	if keys["w"] then
-		self:move( speed * hvec)
+		self:move( speed * front)
 	elseif keys["s"] then
-		self:move(-speed * hvec)
+		self:move(-speed * front)
 	end
-	if keys["a"] then
-		self:move(-speed * (hvec % vvec):normalize())
-	elseif keys["d"] then
-		self:move( speed * (hvec % vvec):normalize())
+	if keys["d"] then
+		self:move( speed * right)
+	elseif keys["a"] then
+		self:move(-speed * right)
 	end
-	if keys["left shift"] then
-		self:move(-speed * vvec)
-	elseif keys["space"] then
-		self:move( speed * vvec)
+	if keys["space"] then
+		self:move( speed * up)
+	elseif keys["left shift"] then
+		self:move(-speed * up)
 	end
 end
 
 function LocalPlayer:mouse_move_callback(event)
-	self.yaw = self.yaw - event.x
+	self.yaw = self.yaw + event.x
 	self.pitch = self.pitch - event.y
-	self:update_look()
+	self:update_camera()
 end
 
 function LocalPlayer:set_position_callback(event)
@@ -59,18 +64,17 @@ function LocalPlayer:set_fov(fov)
 end
 
 function LocalPlayer:set_yaw(yaw)
-	self.yaw = math.rad(yaw)
-	self:update_look()
+	self.yaw = yaw
+	self:update_camera()
 end
 
 function LocalPlayer:set_pitch(pitch)
-	self.pitch = math.rad(pitch)
-	self:update_look()
+	self.pitch = pitch
+	self:update_camera()
 end
 
-function LocalPlayer:update_look()
-	self.horizontal_look = glm.vec3(math.sin(self.yaw), 0, math.cos(self.yaw)):normalize()
-	RenderEngine.camera.front = glm.vec3(math.sin(self.yaw or 0), math.sin(self.pitch or 0), math.cos(self.yaw or 0)):normalize()
+function LocalPlayer:update_camera()
+	RenderEngine.camera:update(self.yaw or 0, self.pitch or 0)	
 end
 
 return LocalPlayer
