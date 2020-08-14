@@ -13,3 +13,6 @@ Dragonblocks:add_task(function()
 		coroutine.yield("FPS:" .. math.floor(Dragonblocks.tps or 0))
 	until false
 end)
+
+
+RenderEngine:render_loop(true)

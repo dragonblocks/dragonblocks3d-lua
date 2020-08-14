@@ -67,7 +67,7 @@ function Mesh:apply_vertices(vertices)
 end
 
 function Mesh:render(dtime)
-	local pos, size = self.pos, self.size
+	local pos, size, rotation = self.pos, self.size, 0
 
 	if self.effect then
 		if self.effect_lasts then
@@ -86,6 +86,8 @@ function Mesh:render(dtime)
 			size = size * math.pow(1 - self.effect_lasts / RenderEngine.mesh_effect_grow_time, 1)
 		elseif self.effect == Mesh.EFFECT_FLYIN then
 			pos = pos - glm.vec3(0, RenderEngine.mesh_effect_flyin_offset * self.effect_lasts / RenderEngine.mesh_effect_flyin_time, 0)
+		elseif self.effect == Mesh.EFFECT_ROTATE then
+			rotation = glfw.get_time() * RenderEngine.mesh_effect_rotate_speed * math.pi * 2
 		end
 	end
 	
@@ -93,6 +95,7 @@ function Mesh:render(dtime)
 	
 	local model_matrix = 1
 		* glm.translate(pos)
+		* glm.rotate(rotation, glm.vec3(0, 1, 0))
 		* glm.scale(size)
 	
 	gl.uniform_matrix4f(gl.get_uniform_location(RenderEngine.shaders, "model"), true, model_matrix)

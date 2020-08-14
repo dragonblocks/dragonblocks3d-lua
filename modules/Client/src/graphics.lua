@@ -10,7 +10,7 @@ function graphics:init()
 	RenderEngine.mesh_effect_grow_time = 0.25
 	RenderEngine.mesh_effect_flyin_time = 0.5
 	RenderEngine.mesh_effect_flyin_offset = 20
-	--RenderEngine.mesh_effect_rotate_speed = 
+	RenderEngine.mesh_effect_rotate_speed = 1
 	
 	RenderEngine:set_wireframe(false)
 
