@@ -5,6 +5,7 @@ require("src/events")
 require("src/taskmgr")
 require("src/modulemgr")
 require("src/serialisation")
+require("src/timeout")
 
 print("Started Dragonblocks core")
 

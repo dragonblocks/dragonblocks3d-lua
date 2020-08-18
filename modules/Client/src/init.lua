@@ -6,13 +6,14 @@ PlayerSystem:init("client")
 Client.map = WorldSystem.Map()
 Client.player = PlayerSystem.LocalPlayer()
 
-Client.player:set_position(glm.vec3(8, 20, 8))
+Client.player:set_position(glm.vec3(8, 8, 8))
+
 
 Dragonblocks:add_task(function()
-	repeat
+	while true do
 		coroutine.yield("FPS:" .. math.floor(Dragonblocks.tps or 0))
-	until false
+	end
 end)
 
 
-RenderEngine:render_loop(true)
+--RenderEngine:render_loop(true)

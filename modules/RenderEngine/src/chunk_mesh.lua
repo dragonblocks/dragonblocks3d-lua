@@ -1,7 +1,7 @@
 local ChunkMesh = Dragonblocks.create_class()
 table.assign(ChunkMesh, RenderEngine.Mesh)
 
-function ChunkMesh:create_vertices(chunk)
+function ChunkMesh:create_faces(blocks)
 	self.vertices = {}
 	self.textures = {}
 	self.vertex_blob_size = 6
@@ -13,13 +13,20 @@ function ChunkMesh:create_vertices(chunk)
 		glm.vec3( 0, -1,  0),
 		glm.vec3( 0,  1,  0),
 	}
-	for _, block in pairs(chunk.blocks) do
+	local bc = 0
+	for _, block in pairs(blocks) do
 		for i, dir in ipairs(face_orientations) do
 			local pos = block.pos
-			if not chunk:get_block(pos + dir) then
+			local dir_pos_hash = WorldSystem.Chunk.get_pos_hash(pos + dir)
+			if not dir_pos_hash or not blocks[dir_pos_hash] then
 				table.insert(self.textures, block.def.texture)
-				self:add_face(block.pos, i)
+				self:add_face(block.pos - glm.vec3(7.5, 7.5, 7.5), i)
 			end
+		end
+		bc = bc + 1
+		if bc == 64 then
+			bc = 0
+			coroutine.yield()
 		end
 	end
 	self:apply_vertices(self.vertices)

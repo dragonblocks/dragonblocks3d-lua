@@ -37,7 +37,7 @@ end
 
 function Dragonblocks:read_modules()
 	if not lfs.attributes("data", "mode") then
-		lfs.mkdir(self.data_path)
+		lfs.mkdir("data")
 	end
 	self.modules = {}
 	for modulename in lfs.dir("modules") do

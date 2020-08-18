@@ -52,6 +52,14 @@ end
 
 function LocalPlayer:set_position_callback(event)
 	RenderEngine.camera.pos = self.pos
+	local pos = WorldSystem.Map.get_chunk_pos(self.pos)
+	for x = pos.x - 1, pos.x + 1 do
+		for y = pos.y - 1, pos.y + 1 do
+			for z = pos.z - 1, pos.z + 1 do
+				Client.map:create_chunk_if_not_exists(glm.vec3(x, y, z))
+			end
+		end
+	end	
 end
 
 function LocalPlayer:move(vec)

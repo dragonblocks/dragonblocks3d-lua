@@ -1,7 +1,11 @@
 depends:
-$ sudo apt install lua5.3 libsqlite3
+
+$ sudo apt install build-essential make lua5.3 liblua5.3-dev libgl1-mesa-dev libglew-dev libglm-dev libglfw3-dev libassimp-dev libsqlite3-dev luarocks
 $ luarocks install lsqlite3
 $ luarocks install luasocket
 $ luarocks install luafilesystem
 
-Build moongl, moonglfw, moonglmath, moonimage and moonassimp: Only needed for running the client, see build instructions in deps/*/README.md
+Build moongl, moonglfw, moonglmath, moonimage and moonassimp: See build instructions in deps/*/README.md
+
+Run:
+	./init.lua Client

@@ -1,4 +1,4 @@
-function Dragonblocks.create_class()
+function Dragonblocks:create_class()
 	local class = self or {}
 	setmetatable(class, {
 		__call = function(_, ...)

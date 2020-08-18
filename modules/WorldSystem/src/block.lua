@@ -1,7 +1,7 @@
 local Block = Dragonblocks.create_class()
 
-function Block:constructor(def, pos)
-	self.def, self.pos = def, pos
+function Block:constructor(pos, def)
+	self.pos, self.def = pos, def
 end
 
 return Block

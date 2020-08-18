@@ -39,7 +39,7 @@ function RenderEngine:render_loop(is_only_task)
 end
 
 function RenderEngine:update_projection_matrix()
-	gl.uniform_matrix4f(gl.get_uniform_location(self.shaders, "projection"), true, glm.perspective(math.rad(self.fov), self.window_width / self.window_height, 0.0001, 100))
+	gl.uniform_matrix4f(gl.get_uniform_location(self.shaders, "projection"), true, glm.perspective(math.rad(self.fov), self.window_width / self.window_height, 0.01, 100))
 end
 
 function RenderEngine:update_view_matrix()
@@ -75,4 +75,11 @@ end
 
 function RenderEngine:set_wireframe(v)
 	gl.polygon_mode("front and back", (v and "line" or "fill"))
+end
+
+function RenderEngine:toggle_fullscreen()
+	self.fullscreen = not self.fullscreen
+	local monitor = glfw.get_primary_monitor()
+	local mode = glfw.get_video_mode(monitor)
+	glfw.set_window_monitor(self.window, self.fullscreen and monitor, 0, 0, mode.width, mode.height, 0)
 end
